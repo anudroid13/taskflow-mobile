@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../cubits/auth/auth_cubit.dart';
+import '../../cubits/auth/auth_state.dart';
 import '../../cubits/task_form/task_form_cubit.dart';
 import '../../cubits/task_form/task_form_state.dart';
 import '../../models/task.dart';
+import '../../models/user.dart';
 import '../../services/task_service.dart';
+import '../../services/user_service.dart';
 
 class TaskEditView extends StatefulWidget {
   final int taskId;
@@ -23,11 +27,32 @@ class _TaskEditViewState extends State<TaskEditView> {
   TaskStatus _status = TaskStatus.todo;
   bool _isLoading = true;
   Task? _task;
+  List<User> _users = [];
+  int? _selectedOwnerId;
+  bool _isAdminOrManager = false;
 
   @override
   void initState() {
     super.initState();
-    _loadTask();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkRole();
+      _loadTask();
+    });
+  }
+
+  void _checkRole() {
+    final authState = context.read<AuthCubit>().state;
+    if (authState is Authenticated &&
+        (authState.user.role == UserRole.admin ||
+            authState.user.role == UserRole.manager)) {
+      _isAdminOrManager = true;
+      _loadUsers();
+    }
+  }
+
+  Future<void> _loadUsers() async {
+    final users = await UserService().getUsers();
+    if (mounted) setState(() => _users = users);
   }
 
   Future<void> _loadTask() async {
@@ -39,6 +64,7 @@ class _TaskEditViewState extends State<TaskEditView> {
         _descriptionController.text = task.description ?? '';
         _priority = task.priority;
         _status = task.status;
+        _selectedOwnerId = task.ownerId;
         _isLoading = false;
       });
     } catch (_) {
@@ -64,8 +90,13 @@ class _TaskEditViewState extends State<TaskEditView> {
       'title': _titleController.text.trim(),
       'description': _descriptionController.text.trim(),
       'priority': _priority.name,
-      'status': _status.name,
     };
+    if (_status != _task?.status) {
+      data['status'] = _status.name;
+    }
+    if (_isAdminOrManager && _selectedOwnerId != null) {
+      data['owner_id'] = _selectedOwnerId;
+    }
     context.read<TaskFormCubit>().updateTask(widget.taskId, data);
   }
 
@@ -157,6 +188,27 @@ class _TaskEditViewState extends State<TaskEditView> {
                           if (value != null) setState(() => _status = value);
                         },
                       ),
+                      if (_isAdminOrManager && _users.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<int>(
+                          value: _selectedOwnerId,
+                          decoration: const InputDecoration(
+                            labelText: 'Assign To',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: _users
+                              .map((u) => DropdownMenuItem(
+                                    value: u.id,
+                                    child: Text('${u.fullName} (${u.email})'),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() => _selectedOwnerId = value);
+                            }
+                          },
+                        ),
+                      ],
                       const SizedBox(height: 24),
                       BlocBuilder<TaskFormCubit, TaskFormState>(
                         builder: (context, state) {

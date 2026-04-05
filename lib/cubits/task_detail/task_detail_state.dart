@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../models/attachment.dart';
 import '../../models/task.dart';
+import '../../models/user.dart';
 
 abstract class TaskDetailState extends Equatable {
   const TaskDetailState();
@@ -16,11 +17,12 @@ class TaskDetailLoading extends TaskDetailState {}
 class TaskDetailLoaded extends TaskDetailState {
   final Task task;
   final List<Attachment> attachments;
+  final User? owner;
 
-  const TaskDetailLoaded({required this.task, required this.attachments});
+  const TaskDetailLoaded({required this.task, required this.attachments, this.owner});
 
   @override
-  List<Object?> get props => [task, attachments];
+  List<Object?> get props => [task, attachments, owner];
 }
 
 class TaskDetailError extends TaskDetailState {

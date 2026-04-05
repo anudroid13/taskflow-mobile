@@ -65,10 +65,12 @@ class _TaskDetailViewState extends State<TaskDetailView> {
           Task? task;
           List<dynamic> attachments = [];
           double? uploadProgress;
+          User? owner;
 
           if (state is TaskDetailLoaded) {
             task = state.task;
             attachments = state.attachments;
+            owner = state.owner;
           } else if (state is TaskDetailUploading) {
             task = state.task;
             attachments = state.attachments;
@@ -104,6 +106,21 @@ class _TaskDetailViewState extends State<TaskDetailView> {
                     ],
                   ),
                   const SizedBox(height: 16),
+
+                  // Assigned to
+                  if (owner != null) ...[
+                    Text('Assigned To',
+                        style: Theme.of(context).textTheme.titleSmall),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.person, size: 18, color: Colors.grey),
+                        const SizedBox(width: 6),
+                        Text('${owner.fullName} (${owner.email})'),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
 
                   // Description
                   if (task.description != null &&

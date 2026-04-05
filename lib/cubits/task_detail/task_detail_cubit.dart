@@ -3,17 +3,21 @@ import '../../core/error_handler.dart';
 import '../../models/attachment.dart';
 import '../../services/attachment_service.dart';
 import '../../services/task_service.dart';
+import '../../services/user_service.dart';
 import 'task_detail_state.dart';
 
 class TaskDetailCubit extends Cubit<TaskDetailState> {
   final TaskService _taskService;
   final AttachmentService _attachmentService;
+  final UserService _userService;
 
   TaskDetailCubit({
     TaskService? taskService,
     AttachmentService? attachmentService,
+    UserService? userService,
   })  : _taskService = taskService ?? TaskService(),
         _attachmentService = attachmentService ?? AttachmentService(),
+        _userService = userService ?? UserService(),
         super(TaskDetailInitial());
 
   Future<void> loadTask(int taskId) async {
@@ -23,7 +27,8 @@ class TaskDetailCubit extends Cubit<TaskDetailState> {
       final attachments = await _attachmentService.getAttachments();
       final taskAttachments =
           attachments.where((a) => a.taskId == taskId).toList();
-      emit(TaskDetailLoaded(task: task, attachments: taskAttachments));
+      final owner = await _userService.getUser(task.ownerId);
+      emit(TaskDetailLoaded(task: task, attachments: taskAttachments, owner: owner));
     } catch (e) {
       emit(TaskDetailError(ErrorHandler.getMessage(e)));
     }

@@ -1,108 +1,114 @@
-# taskflow-backend
+# taskflow-mobile
 
-# Smart Task Management Platform
+# Smart Task Management App
 
 ## Overview
-A scalable backend solution built in FastAPI for enterprise task management with role-based access control, performance tracking, and mobile integration.
+A cross-platform Flutter mobile app for enterprise task management with role-based access control, productivity dashboards, and seamless integration with the TaskFlow backend API.
 
 ## Project Goals
-- Efficient task tracking through API endpoints
-- Role-based access control (Admin, Manager, Employee)
-- Productivity metrics and dashboard data
-- Production-grade security (JWT authentication, input validation)
-- Cloud readiness (Docker + PostgreSQL)
+- Intuitive mobile interface for task management
+- Role-based views (Admin, Manager, Employee)
+- Real-time dashboard with productivity metrics
+- Secure authentication with JWT token storage
+- File attachment support for tasks
 
 ## Features
-- Authentication (signup/login, JWT)
-- Users CRUD with role management
-- Task CRUD with status/priority/assignment
-- Dashboard endpoints (task stats, overdue, metrics)
+- Authentication (login/signup with JWT)
+- Role-based navigation shells (Admin, Manager, Employee)
+- Task CRUD with status, priority, and assignment
+- Dashboard with charts and analytics (fl_chart)
+- User management (Admin)
 - File attachments to tasks
-- Filters: status, date range, assigned user
+- Secure token storage (flutter_secure_storage)
 
-## Non-functional requirements
-- API response time < 300ms for standard queries
-- Secure validation and error handling
-- Scalable microservices-ready architecture
-- Logging, monitoring, and observability
+## Tech Stack
+- **Framework:** Flutter (SDK ^3.7.2)
+- **State Management:** flutter_bloc / Cubit
+- **Networking:** Dio
+- **Routing:** go_router
+- **Charts:** fl_chart
+- **Storage:** flutter_secure_storage
 
-## Folder structure (recommended)
+## Folder Structure
 ```
-taskflow-backend/
-  app/
-    main.py
-    api/
-      v1/
-        routers/
-          auth.py
-          users.py
-          tasks.py
-          dashboard.py
-        dependencies.py
+taskflow-mobile/
+  lib/
+    main.dart
     core/
-      config.py
-      security.py
-      logger.py
+      api_client.dart
+      constants.dart
+      error_handler.dart
+      secure_storage.dart
     models/
-      user.py
-      task.py
-      attachment.py
-    schemas/
-      token.py
-      user.py
-      task.py
-      dashboard.py
-    crud/
-      user.py
-      task.py
-      attachment.py
-    db/
-      base.py
-      session.py
-      init.py
+      attachment.dart
+      dashboard.dart
+      login_response.dart
+      task.dart
+      user.dart
     services/
-      auth_service.py
-      task_service.py
-      analytics_service.py
-    tests/
-      test_auth.py
-      test_users.py
-      test_tasks.py
-      test_dashboard.py
-  Dockerfile
-  docker-compose.yml
-  requirements.txt
+      attachment_service.dart
+      auth_service.dart
+      dashboard_service.dart
+      task_service.dart
+      user_service.dart
+    routes/
+      app_router.dart
+    cubits/
+      auth/
+      dashboard/
+      task_detail/
+      task_form/
+      task_list/
+      user_form/
+      user_list/
+    views/
+      auth/
+        login_view.dart
+        signup_view.dart
+      dashboard/
+        dashboard_view.dart
+      shell/
+        admin_shell.dart
+        employee_shell.dart
+        manager_shell.dart
+      tasks/
+        task_create_view.dart
+        task_detail_view.dart
+        task_edit_view.dart
+        task_list_view.dart
+      users/
+        user_create_view.dart
+        user_edit_view.dart
+        user_list_view.dart
+    widgets/
+      confirm_dialog.dart
+      empty_state.dart
+      loading_overlay.dart
+      priority_tag.dart
+      status_badge.dart
+  test/
+    widget_test.dart
+  pubspec.yaml
   README.md
 ```
 
-## Quick setup
-1. Create virtual env: `python -m venv .venv`
-2. Activate: `source .venv/bin/activate`
-3. Install: `pip install -r requirements.txt`
-4. Run migrations (Alembic or custom scripts)
-5. Start app: `uvicorn app.main:app --reload`
+## Quick Setup
+1. Install Flutter: https://docs.flutter.dev/get-started/install
+2. Clone the repo: `git clone https://github.com/anudroid13/taskflow-mobile.git`
+3. Install dependencies: `flutter pub get`
+4. Run the app: `flutter run`
 
-## API reference (high-level)
-- POST `/auth/signup`
-- POST `/auth/login`
-- GET `/users/`
-- POST `/tasks/`
-- GET `/tasks/`
-- PUT `/tasks/{id}`
-- DELETE `/tasks/{id}`
-- GET `/dashboard/summary`
-- POST `/attachments/`
+## Backend
+This app connects to the [taskflow-backend](https://github.com/anudroid13/taskflow-backend) API. Make sure the backend is running before using the app.
+
+- **Android emulator:** connects to `http://10.0.2.2:8000`
+- **iOS simulator / desktop:** connects to `http://localhost:8000`
 
 ## Testing
-- `pytest -q`
+- `flutter test`
 
-## Deployment
-- Build Docker image
-- Start `docker-compose up`
-- Provision PostgreSQL
-- Set env vars: `DATABASE_URL`, `SECRET_KEY`, `JWT_EXPIRE_MINUTES`
-
-## Future enhancements
-- Realtime updates (WebSocket)
-- AI suggestions for task assignment and priorities
-- Mobile push notifications
+## Future Enhancements
+- Push notifications
+- Offline mode with local caching
+- Dark theme support
+- AI-powered task suggestions

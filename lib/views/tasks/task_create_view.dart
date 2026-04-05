@@ -7,6 +7,7 @@ import '../../cubits/task_form/task_form_cubit.dart';
 import '../../cubits/task_form/task_form_state.dart';
 import '../../models/task.dart';
 import '../../models/user.dart';
+import '../../services/user_service.dart';
 
 class TaskCreateView extends StatefulWidget {
   const TaskCreateView({super.key});
@@ -20,6 +21,29 @@ class _TaskCreateViewState extends State<TaskCreateView> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   TaskPriority _priority = TaskPriority.medium;
+  List<User> _users = [];
+  int? _selectedOwnerId;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadUsers());
+  }
+
+  Future<void> _loadUsers() async {
+    final authState = context.read<AuthCubit>().state;
+    if (authState is Authenticated &&
+        (authState.user.role == UserRole.admin ||
+            authState.user.role == UserRole.manager)) {
+      final users = await UserService().getUsers();
+      if (mounted) {
+        setState(() {
+          _users = users;
+          _selectedOwnerId = authState.user.id;
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -39,7 +63,7 @@ class _TaskCreateViewState extends State<TaskCreateView> {
               ? null
               : _descriptionController.text.trim(),
           priority: _priority.name,
-          ownerId: authState.user.id,
+          ownerId: _selectedOwnerId ?? authState.user.id,
         );
   }
 
@@ -113,6 +137,31 @@ class _TaskCreateViewState extends State<TaskCreateView> {
                     if (value != null) setState(() => _priority = value);
                   },
                 ),
+                if (!isEmployee && _users.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<int>(
+                    value: _selectedOwnerId,
+                    decoration: const InputDecoration(
+                      labelText: 'Assign To',
+                      border: OutlineInputBorder(),
+                    ),
+                    items: _users
+                        .map((u) => DropdownMenuItem(
+                              value: u.id,
+                              child: Text('${u.fullName} (${u.email})'),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() => _selectedOwnerId = value);
+                      }
+                    },
+                    validator: (value) {
+                      if (value == null) return 'Please select a user';
+                      return null;
+                    },
+                  ),
+                ],
                 if (isEmployee)
                   const Padding(
                     padding: EdgeInsets.only(top: 12),
