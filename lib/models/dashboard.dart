@@ -102,22 +102,22 @@ class UserTaskCount extends Equatable {
 }
 
 class DateRangeStats extends Equatable {
-  final String startDate;
-  final String endDate;
+  final String? startDate;
+  final String? endDate;
   final int total;
   final int completed;
 
   const DateRangeStats({
-    required this.startDate,
-    required this.endDate,
+    this.startDate,
+    this.endDate,
     required this.total,
     required this.completed,
   });
 
   factory DateRangeStats.fromJson(Map<String, dynamic> json) {
     return DateRangeStats(
-      startDate: json['start_date'] as String,
-      endDate: json['end_date'] as String,
+      startDate: json['start_date'] as String?,
+      endDate: json['end_date'] as String?,
       total: json['total'] as int,
       completed: json['completed'] as int,
     );

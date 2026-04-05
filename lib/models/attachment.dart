@@ -5,14 +5,16 @@ class Attachment extends Equatable {
   final String filename;
   final String url;
   final int taskId;
-  final DateTime createdAt;
+  final int uploaderId;
+  final DateTime uploadedAt;
 
   const Attachment({
     required this.id,
     required this.filename,
     required this.url,
     required this.taskId,
-    required this.createdAt,
+    required this.uploaderId,
+    required this.uploadedAt,
   });
 
   factory Attachment.fromJson(Map<String, dynamic> json) {
@@ -21,7 +23,8 @@ class Attachment extends Equatable {
       filename: json['filename'] as String,
       url: json['url'] as String,
       taskId: json['task_id'] as int,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      uploaderId: json['uploader_id'] as int,
+      uploadedAt: DateTime.parse(json['uploaded_at'] as String),
     );
   }
 
@@ -34,5 +37,5 @@ class Attachment extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, filename, url, taskId, createdAt];
+  List<Object?> get props => [id, filename, url, taskId, uploaderId, uploadedAt];
 }

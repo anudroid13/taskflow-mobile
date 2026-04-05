@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../cubits/auth/auth_cubit.dart';
+import '../../widgets/confirm_dialog.dart';
 
 class EmployeeShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -9,6 +12,26 @@ class EmployeeShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('TaskFlow'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () async {
+              final confirmed = await showConfirmDialog(
+                context,
+                title: 'Logout',
+                content: 'Are you sure you want to logout?',
+                confirmText: 'Logout',
+              );
+              if (confirmed && context.mounted) {
+                context.read<AuthCubit>().logout();
+              }
+            },
+          ),
+        ],
+      ),
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
