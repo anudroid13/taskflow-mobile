@@ -1,5 +1,12 @@
 # taskflow-mobile
 
+> **Part of the Taskflow Project** — an enterprise task management platform.
+
+| Repository | Description |
+|---|---|
+| [taskflow-mobile](https://github.com/anudroid13/taskflow-mobile) | Flutter mobile app (this repo) |
+| [taskflow-backend](https://github.com/anudroid13/taskflow-backend) | REST API backend |
+
 # Smart Task Management App
 
 ## Overview
