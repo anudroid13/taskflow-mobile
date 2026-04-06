@@ -1,72 +1,123 @@
-# API Integration for Taskflow Mobile Application
+# API Integration Documentation
 
 ## Overview
-This document provides an overview of API integration for the Taskflow mobile application, detailing the endpoints, authentication methods, and data formats used.
+This document provides comprehensive documentation of the REST API endpoints for the Taskflow Mobile application.
 
 ## Authentication
-To access the API, you must authenticate using a token. Include the token in the `Authorization` header of each request:
-```
-Authorization: Bearer YOUR_API_TOKEN
-```
 
-## Base URL
-The base URL for the API is:
-```
-https://api.taskflow-mobile.com/v1
-```
+### Endpoint: `POST /api/auth/login`
+- **Description**: Authenticate a user and return an access token.
+- **Request Body**:
+  - `username`: string
+  - `password`: string
+- **Response**:
+  - `token`: string
 
-## Endpoints
+### Endpoint: `POST /api/auth/logout`
+- **Description**: Log out the authenticated user.
+- **Response**:
+  - `message`: string
 
-### 1. Get User Information
-- **Endpoint:** `/user`
-- **Method:** GET
-- **Description:** Retrieve information about the authenticated user.
-- **Response:** 
-    ```json
-    {
-      "user_id": "12345",
-      "name": "John Doe",
-      "email": "john@example.com"
-    }
-    ```
+## Tasks
 
-### 2. Create New Task
-- **Endpoint:** `/tasks`
-- **Method:** POST
-- **Description:** Create a new task.
-- **Request Body:** 
-    ```json
-    {
-      "title": "Task Title",
-      "description": "Task Description"
-    }
-    ```
-- **Response:** 
-    ```json
-    {
-      "task_id": "67890",
-      "status": "created"
-    }
-    ```
+### Endpoint: `GET /api/tasks`
+- **Description**: Retrieve a list of tasks.
+- **Response**:
+  - `tasks`: array of task objects
 
-### 3. Update Task
-- **Endpoint:** `/tasks/{task_id}`
-- **Method:** PUT
-- **Description:** Update an existing task.
-- **Request Body:** 
-    ```json
-    {
-      "title": "Updated Title",
-      "description": "Updated Description"
-    }
-    ```
-- **Response:** 
-    ```json
-    {
-      "task_id": "67890",
-      "status": "updated"
-    }
-    ```
+### Endpoint: `POST /api/tasks`
+- **Description**: Create a new task.
+- **Request Body**:
+  - `title`: string
+  - `description`: string
+  - `deadline`: string (optional)
+- **Response**:
+  - `task`: task object
 
-## Conclusion
-Integrating with the Taskflow API enables seamless interaction with the mobile application, providing users with powerful tools to manage their tasks efficiently.
+### Endpoint: `GET /api/tasks/{id}`
+- **Description**: Retrieve a specific task by ID.
+- **Response**:
+  - `task`: task object
+
+### Endpoint: `PUT /api/tasks/{id}`
+- **Description**: Update a specific task by ID.
+- **Request Body**:
+  - `title`: string (optional)
+  - `description`: string (optional)
+  - `completed`: boolean (optional)
+- **Response**:
+  - `task`: updated task object
+
+### Endpoint: `DELETE /api/tasks/{id}`
+- **Description**: Delete a specific task by ID.
+- **Response**:
+  - `message`: string
+
+## Users
+
+### Endpoint: `GET /api/users`
+- **Description**: Retrieve a list of users.
+- **Response**:
+  - `users`: array of user objects
+
+### Endpoint: `POST /api/users`
+- **Description**: Create a new user.
+- **Request Body**:
+  - `username`: string
+  - `password`: string
+- **Response**:
+  - `user`: user object
+
+### Endpoint: `GET /api/users/{id}`
+- **Description**: Retrieve a specific user by ID.
+- **Response**:
+  - `user`: user object
+
+### Endpoint: `PUT /api/users/{id}`
+- **Description**: Update a specific user by ID.
+- **Request Body**:
+  - `username`: string (optional)
+  - `password`: string (optional)
+- **Response**:
+  - `user`: updated user object
+
+### Endpoint: `DELETE /api/users/{id}`
+- **Description**: Delete a specific user by ID.
+- **Response**:
+  - `message`: string
+
+## Attachments
+
+### Endpoint: `POST /api/attachments`
+- **Description**: Upload an attachment.
+- **Request Body**:
+  - `file`: binary
+- **Response**:
+  - `attachment`: attachment object
+
+### Endpoint: `GET /api/attachments/{id}`
+- **Description**: Retrieve a specific attachment by ID.
+- **Response**:
+  - `attachment`: attachment object
+
+### Endpoint: `DELETE /api/attachments/{id}`
+- **Description**: Delete a specific attachment by ID.
+- **Response**:
+  - `message`: string
+
+## Dashboard
+
+### Endpoint: `GET /api/dashboard/stats`
+- **Description**: Retrieve statistics for the dashboard.
+- **Response**:
+  - `stats`: dashboard statistics object
+
+### Endpoint: `GET /api/dashboard/tasks`
+- **Description**: Retrieve tasks for the dashboard.
+- **Response**:
+  - `tasks`: array of task objects with dashboard view formatting.
+
+### Endpoint: `GET /api/dashboard/users`
+- **Description**: Retrieve user statistics for the dashboard.
+- **Response**:
+  - `users`: array of user statistics objects.
